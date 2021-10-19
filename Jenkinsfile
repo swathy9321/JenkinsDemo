@@ -1,10 +1,13 @@
  pipeline {
-  tools {
-    maven 'Maven3.8.3'
+  agent {
+      docker{
+          image 'maven:3-alpine'
+          args '-v/root/.m2:/root/.m2'
+      }
+    
   }
-    agent any
     stages {
-        stage('Clean') {
+        stage('Build') {
             steps {
                 echo 'Cleaning..'
                 bat 'mvn -B -DskipTests clean'
@@ -21,35 +24,14 @@
                 }
             }
         }
-        stage('Package') {
+        stage('Delivery') {
             steps {
-                echo 'mvn install'
+                
+                bat './jenkins/scripts/deliver.bat'
             }
-            post {
-                success{
-                    bat 'echo "Packaging done"'
-                }
-                failure{
-                    bat 'echo "Packaging failure"'
-                }
-            }
+           
         }
 
-        // stage("Deploy to AWS"){
-        //     steps{
-        //          withAWS(credentials:'puneetawscred', region:'us-east-1') {
-        //              s3Upload(workingDir:'target', includePathPattern:'**/*.jar', bucket:'my-jenkinsangular1', path:'')
-        //     }
-        //     }
-        //     post {
-        //         success{
-        //             bat 'echo "Uploaded to AWS"'
-        //         }
-        //         failure{
-        //             bat 'echo "failure"'
-        //         }
-        //     }
         
-        // }
     }
 }
