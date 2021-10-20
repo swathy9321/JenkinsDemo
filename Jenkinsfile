@@ -11,9 +11,9 @@
                 echo 'Testing..'
             }
         }
-        stage('Deploy') {
+        stage('Integration') {
             steps {
-                 echo 'Deploying..'
+                 echo 'Integration Running..'
             } 
         }
     }
